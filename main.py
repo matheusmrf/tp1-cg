@@ -26,6 +26,16 @@ class Tela:
         self.janela.title("Desenhador Gráfico")
         self.janela.geometry(f"{self.largura}x{self.altura}")
 
+        # Frames principais
+        self.main_frame = tk.Frame(self.janela)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+
+        self.left_frame = tk.Frame(self.main_frame, width=200)
+        self.left_frame.pack(side=tk.LEFT, fill=tk.Y)
+
+        self.canvas_frame = tk.Frame(self.main_frame)
+        self.canvas_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
     def executar(self):
         self.configurar_canvas()
         self.configurar_labels()
@@ -39,25 +49,23 @@ class Tela:
 
     def configurar_canvas(self):
         """
-        Cria um canvas de 800x600 no centro da tela com scrollbars.
+        Cria um canvas com scrollbars.
         """
         largura_cv, altura_cv = 800, 600
-        centro_x = (self.largura - largura_cv) // 2
-        centro_y = (self.altura - altura_cv) // 2
 
-        self.canvas = tk.Canvas(self.janela, width=largura_cv,
+        self.canvas = tk.Canvas(self.canvas_frame, width=largura_cv,
                                 height=altura_cv, bg="light grey")
         self.canvas.bind('<Button-1>', self.on_click_canvas)
         self.canvas.bind('<Button-3>', self.on_click_canvas)
-        self.canvas.place(x=centro_x, y=centro_y)
+        self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        scrollbar_v = tk.Scrollbar(self.janela, orient=tk.VERTICAL,
-                                    command=self.canvas.yview)
-        scrollbar_v.place(x=centro_x + largura_cv, y=centro_y, height=altura_cv)
+        scrollbar_v = tk.Scrollbar(self.canvas_frame, orient=tk.VERTICAL,
+                                   command=self.canvas.yview)
+        scrollbar_v.pack(side=tk.RIGHT, fill=tk.Y)
 
         scrollbar_h = tk.Scrollbar(self.janela, orient=tk.HORIZONTAL,
-                                    command=self.canvas.xview)
-        scrollbar_h.place(x=centro_x, y=centro_y + altura_cv, width=largura_cv)
+                                   command=self.canvas.xview)
+        scrollbar_h.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.canvas.config(scrollregion=(-800, -600, 800, 600),
                            yscrollcommand=scrollbar_v.set,
@@ -67,28 +75,27 @@ class Tela:
         """
         Cria labels para exibir coordenadas dos pontos e da janela de recorte.
         """
-        meio_y = self.altura / 2
-        estilo_fonte = ("Arial", 13)
+        estilo_fonte = ("Arial", 12)
 
-        self.label_p1 = tk.Label(self.janela,
-                                  text=f"P1: ({self.x1}, {self.y1})",
-                                  font=estilo_fonte)
-        self.label_p1.place(x=10, y=meio_y - 10)
+        self.label_p1 = tk.Label(self.left_frame,
+                                 text=f"P1: ({self.x1}, {self.y1})",
+                                 font=estilo_fonte)
+        self.label_p1.pack(pady=5)
 
-        self.label_p2 = tk.Label(self.janela,
-                                  text=f"P2: ({self.x2}, {self.y2})",
-                                  font=estilo_fonte)
-        self.label_p2.place(x=10, y=meio_y + 20)
+        self.label_p2 = tk.Label(self.left_frame,
+                                 text=f"P2: ({self.x2}, {self.y2})",
+                                 font=estilo_fonte)
+        self.label_p2.pack(pady=5)
 
-        self.label_xmin = tk.Label(self.janela,
-                                    text=f"Xmin, Ymin: ({self.xmin}, {self.ymin})",
-                                    font=estilo_fonte)
-        self.label_xmin.place(x=10, y=meio_y + 50)
+        self.label_xmin = tk.Label(self.left_frame,
+                                   text=f"Xmin, Ymin: ({self.xmin}, {self.ymin})",
+                                   font=estilo_fonte)
+        self.label_xmin.pack(pady=5)
 
-        self.label_xmax = tk.Label(self.janela,
-                                    text=f"Xmax, Ymax: ({self.xmax}, {self.ymax})",
-                                    font=estilo_fonte)
-        self.label_xmax.place(x=10, y=meio_y + 80)
+        self.label_xmax = tk.Label(self.left_frame,
+                                   text=f"Xmax, Ymax: ({self.xmax}, {self.ymax})",
+                                   font=estilo_fonte)
+        self.label_xmax.pack(pady=5)
 
     def configurar_menu_transformacoes(self):
         """
@@ -139,11 +146,11 @@ class Tela:
         """
         Cria botão para limpar o canvas.
         """
-        botao_limpar = tk.Button(self.janela,
-                                  text="Limpar",
-                                  font=("Arial", 13),
-                                  command=self.on_limpar)
-        botao_limpar.pack(side=tk.BOTTOM)
+        botao_limpar = tk.Button(self.left_frame,
+                                 text="Limpar",
+                                 font=("Arial", 12),
+                                 command=self.on_limpar)
+        botao_limpar.pack(pady=20)
 
     # MANIPULADORES DE EVENTOS
 
